@@ -5,7 +5,19 @@
 
 makeCacheMatrix <- function(x = matrix()) 
 {
-      ##my change  
+        inverse <- NULL
+        set <- function(y)
+        {
+                x <<- y           ##stores y at parent level
+                inverse <<- NULL  ##stores inverse at parent level
+        }
+        get <- function() x   
+        setinverse <- function(newinverse) inverse <<- newinverse
+        getinverse <- function() inverse
+        
+        list(set = set, get = get,
+             setinverse = setinverse,
+             getinverse = getinverse)
 }
 
 
@@ -14,4 +26,15 @@ makeCacheMatrix <- function(x = matrix())
 cacheSolve <- function(x, ...) 
 {
         ## Return a matrix that is the inverse of 'x'
+        inverse <- x$getinverse()
+        if (!is.null(inverse))
+        {
+                message("getting cashed inverse")
+                return (inverse)
+        }
+        
+        data <- x$get()
+        inverse <- solve(data, ...)
+        x$setinverse(inverse)
+        inverse
 }
